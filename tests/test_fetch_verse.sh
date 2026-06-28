@@ -1,0 +1,40 @@
+#!/usr/bin/env bash
+set -euo pipefail
+HERE="$(cd "$(dirname "$0")" && pwd)"
+SCRIPT="$HERE/../scripts/fetch-verse.sh"
+fail() { echo "FAIL: $1" >&2; exit 1; }
+
+# 1. Parses a mocked WEB response into "reference\n text"
+out="$(FETCH_VERSE_MOCK_FILE="$HERE/fixtures/web-john-3-16.json" "$SCRIPT" "John 3:16" web)"
+[ "$(printf '%s' "$out" | sed -n '1p')" = "John 3:16" ] || fail "reference line wrong: $out"
+printf '%s' "$out" | sed -n '2p' | grep -q "For God so loved the world" || fail "verse text missing: $out"
+# Verse text must be exactly trimmed (no leading/trailing whitespace).
+line2="$(printf '%s' "$out" | sed -n '2p')"
+[ "$line2" = "For God so loved the world, that he gave his one and only Son, that whoever believes in him should not perish, but have eternal life." ] || fail "verse text not exactly trimmed: [$line2]"
+
+# 2. Failure path: missing mock file exits 3 with stderr message
+set +e
+err="$(FETCH_VERSE_MOCK_FILE="$HERE/fixtures/does-not-exist.json" "$SCRIPT" "John 3:16" web 2>&1 >/dev/null)"
+code=$?
+set -e
+[ "$code" -eq 3 ] || fail "expected exit 3 on fetch failure, got $code"
+printf '%s' "$err" | grep -qi "could not fetch" || fail "missing error message: $err"
+
+# 3. Missing reference arg exits non-zero
+set +e; "$SCRIPT" >/dev/null 2>&1; code=$?; set -e
+[ "$code" -ne 0 ] || fail "expected non-zero when reference arg omitted"
+
+# 4. ESV: mocked response parses passages[0] + canonical
+out="$(ESV_API_KEY=dummy FETCH_VERSE_MOCK_FILE="$HERE/fixtures/esv-john-3-16.json" "$SCRIPT" "John 3:16" esv)"
+[ "$(printf '%s' "$out" | sed -n '1p')" = "John 3:16" ] || fail "esv reference wrong: $out"
+printf '%s' "$out" | sed -n '2p' | grep -q "For God so loved the world" || fail "esv text missing: $out"
+
+# 5. ESV without key exits 4
+set +e
+err="$(ESV_API_KEY="" "$SCRIPT" "John 3:16" esv 2>&1 >/dev/null)"
+code=$?
+set -e
+[ "$code" -eq 4 ] || fail "expected exit 4 when ESV key missing, got $code"
+printf '%s' "$err" | grep -qi "esv" || fail "missing ESV key message: $err"
+
+echo "PASS: fetch-verse public-domain path"

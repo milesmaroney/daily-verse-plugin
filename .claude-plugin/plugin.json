@@ -1,0 +1,9 @@
+{
+  "name": "daily-verse",
+  "version": "0.1.0",
+  "description": "Reads what you've worked on recently and gives a relevant Bible verse with a short reflection.",
+  "author": {
+    "name": "Miles Maroney",
+    "email": "miles@milesmaroney.com"
+  }
+}
