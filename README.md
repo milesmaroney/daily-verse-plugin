@@ -43,3 +43,7 @@ key. ESV is optional and uses your own free api.esv.org key. NIV is not availabl
 ## Development
 
 Run the test suite: `bash tests/run.sh`
+
+## License
+
+MIT — see [LICENSE](LICENSE).
