@@ -1,0 +1,14 @@
+{
+  "name": "daily-verse",
+  "owner": {
+    "name": "Miles Maroney",
+    "email": "miles@milesmaroney.com"
+  },
+  "plugins": [
+    {
+      "name": "daily-verse",
+      "source": "./",
+      "description": "Reads what you've worked on recently and gives a relevant Bible verse with a short reflection."
+    }
+  ]
+}
