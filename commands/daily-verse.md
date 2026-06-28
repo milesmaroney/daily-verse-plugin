@@ -49,8 +49,11 @@ reference string, never the user's content):
 "${CLAUDE_PLUGIN_ROOT}/scripts/fetch-verse.sh" "<reference>" "<translation>"
 ```
 
-For `translation: esv`, first export the key from config:
-`ESV_API_KEY="<esv_api_key>"` before calling the helper.
+For `translation: esv`, pass the key inline on the same command so the helper inherits it:
+
+```bash
+ESV_API_KEY="<esv_api_key>" "${CLAUDE_PLUGIN_ROOT}/scripts/fetch-verse.sh" "<reference>" "esv"
+```
 
 Handle exit codes:
 - **exit 4** (ESV key missing): re-run the helper with `web` and tell the user ESV
