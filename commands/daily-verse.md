@@ -1,5 +1,6 @@
 ---
 description: Reads what you've worked on recently and gives a relevant Bible verse with a short reflection.
+allowed-tools: Bash, Read
 ---
 
 You are producing today's relevant Bible verse for the user. Follow these steps in order.
@@ -42,8 +43,8 @@ reference yourself (e.g. `Philippians 4:6-7`).
 
 ## 5. Fetch exact text
 
-Run the helper (this is the ONLY thing that touches the network — it sends only the
-reference string, never the user's content):
+Run the helper (this is the ONLY thing that touches the network — it sends
+only the reference string to the API, never the user's content):
 
 ```bash
 "${CLAUDE_PLUGIN_ROOT}/scripts/fetch-verse.sh" "<reference>" "<translation>"

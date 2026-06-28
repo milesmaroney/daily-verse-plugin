@@ -13,5 +13,5 @@ grep -q 'fetch-verse.sh' "$F" || fail "command must invoke fetch-verse.sh"
 # Honors config locations
 grep -q 'daily-verse.local.md' "$F" || fail "command must read config file"
 # Privacy guardrail present
-grep -qi 'reference' "$F" || fail "command must mention sending only the reference"
+grep -q 'only the reference string to the API' "$F" || fail "command must mention sending only the reference"
 echo "PASS: command frontmatter"
