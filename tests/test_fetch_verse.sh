@@ -8,8 +8,9 @@ fail() { echo "FAIL: $1" >&2; exit 1; }
 out="$(FETCH_VERSE_MOCK_FILE="$HERE/fixtures/web-john-3-16.json" "$SCRIPT" "John 3:16" web)"
 [ "$(printf '%s' "$out" | sed -n '1p')" = "John 3:16" ] || fail "reference line wrong: $out"
 printf '%s' "$out" | sed -n '2p' | grep -q "For God so loved the world" || fail "verse text missing: $out"
-# No leading/trailing blank lines around the text
-[ -n "$(printf '%s' "$out" | sed -n '2p')" ] || fail "verse text not on line 2 (untrimmed?): $out"
+# Verse text must be exactly trimmed (no leading/trailing whitespace).
+line2="$(printf '%s' "$out" | sed -n '2p')"
+[ "$line2" = "For God so loved the world, that he gave his one and only Son, that whoever believes in him should not perish, but have eternal life." ] || fail "verse text not exactly trimmed: [$line2]"
 
 # 2. Failure path: missing mock file exits 3 with stderr message
 set +e

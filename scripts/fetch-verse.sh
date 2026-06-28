@@ -24,7 +24,8 @@ fi
 out_ref="$(printf '%s' "$resp" | jq -er '.reference' 2>/dev/null)" \
   || { echo "could not fetch verse (unexpected response)" >&2; exit 3; }
 out_text="$(printf '%s' "$resp" | jq -er '.text' 2>/dev/null \
-  | sed -e 's/^[[:space:]]*//' -e 's/[[:space:]]*$//' | tr -s '\n' ' ')" \
+  | sed -e 's/^[[:space:]]*//' -e 's/[[:space:]]*$//' | tr -s '\n' ' ' \
+  | sed -e 's/^[[:space:]]*//' -e 's/[[:space:]]*$//')" \
   || { echo "could not fetch verse (unexpected response)" >&2; exit 3; }
 
 printf '%s\n%s\n' "$out_ref" "$out_text"
