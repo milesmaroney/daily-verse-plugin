@@ -24,4 +24,17 @@ printf '%s' "$err" | grep -qi "could not fetch" || fail "missing error message: 
 set +e; "$SCRIPT" >/dev/null 2>&1; code=$?; set -e
 [ "$code" -ne 0 ] || fail "expected non-zero when reference arg omitted"
 
+# 4. ESV: mocked response parses passages[0] + canonical
+out="$(ESV_API_KEY=dummy FETCH_VERSE_MOCK_FILE="$HERE/fixtures/esv-john-3-16.json" "$SCRIPT" "John 3:16" esv)"
+[ "$(printf '%s' "$out" | sed -n '1p')" = "John 3:16" ] || fail "esv reference wrong: $out"
+printf '%s' "$out" | sed -n '2p' | grep -q "For God so loved the world" || fail "esv text missing: $out"
+
+# 5. ESV without key exits 4
+set +e
+err="$(ESV_API_KEY="" "$SCRIPT" "John 3:16" esv 2>&1 >/dev/null)"
+code=$?
+set -e
+[ "$code" -eq 4 ] || fail "expected exit 4 when ESV key missing, got $code"
+printf '%s' "$err" | grep -qi "esv" || fail "missing ESV key message: $err"
+
 echo "PASS: fetch-verse public-domain path"
